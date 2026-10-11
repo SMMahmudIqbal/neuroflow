@@ -1,0 +1,26 @@
+# Dependencies & virtual environments
+node_modules/
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# Builds & caches
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+.npm/
+
+# Uploads & local data
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Environment & logs
+.env
+.env.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
