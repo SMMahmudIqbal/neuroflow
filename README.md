@@ -40,14 +40,14 @@ flowchart TD
         Graph["Cosine Similarity Matrix"]
     end
 
-    UI -->|Query / Settings / Upload| API
+    UI -->|"Query / Settings / Upload"| API
     API --> Engine
     Engine --> TFIDF
     TFIDF --> Manifold
     TFIDF --> Graph
-    Manifold -->|Coordinates (x, y, z)| API
-    Graph -->|Synaptic Edges| API
-    API -->|Nodes & Edges Payload| Canvas
+    Manifold -->|"Coordinates 3D (x, y, z)"| API
+    Graph -->|"Synaptic Edges"| API
+    API -->|"Nodes & Edges Payload"| Canvas
     Canvas --> Audio
 ```
 
