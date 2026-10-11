@@ -1,11 +1,11 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
 import type { ClusterNode, GraphEdge } from '../types';
 import { ImageNodes } from './ImageNodes';
 import { LatentNodes } from './LatentNodes';
 import { GraphEdges } from './GraphEdges';
 import { Starfield } from './Starfield';
+import { CameraFocus } from './CameraFocus';
 
 interface GraphCanvasProps {
   nodes: ClusterNode[];
@@ -16,6 +16,7 @@ interface GraphCanvasProps {
   hoveredNodeId: string | null;
   setHoveredNodeId: (id: string | null) => void;
   mode: 'vision' | 'text';
+  autoRotate: boolean;
 }
 
 export const GraphCanvas: React.FC<GraphCanvasProps> = ({
@@ -27,6 +28,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
   hoveredNodeId,
   setHoveredNodeId,
   mode,
+  autoRotate,
 }) => {
   return (
     <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
@@ -34,10 +36,10 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
         camera={{ position: [0, 16, 42], fov: 50, near: 0.1, far: 1000 }}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
       >
-        <color attach="background" args={['#06080e']} />
+        <color attach="background" args={['#030407']} />
 
         {/* Ambient & dynamic lights */}
-        <ambientLight intensity={0.65} />
+        <ambientLight intensity={0.7} />
         <pointLight position={[20, 30, 20]} intensity={1.5} color="#38bdf8" />
         <pointLight position={[-20, -20, -20]} intensity={1.2} color="#a855f7" />
         <directionalLight position={[0, 40, 10]} intensity={0.9} />
@@ -72,16 +74,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
           />
         )}
 
-        <OrbitControls
-          makeDefault
-          enableDamping
-          dampingFactor={0.06}
-          rotateSpeed={0.8}
-          zoomSpeed={1.0}
-          panSpeed={0.8}
-          maxDistance={120}
-          minDistance={3}
-        />
+        <CameraFocus selectedNode={selectedNode} autoRotate={autoRotate} />
       </Canvas>
     </div>
   );

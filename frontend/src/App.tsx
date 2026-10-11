@@ -18,6 +18,7 @@ export const App: React.FC = () => {
   const [reductionMethod, setReductionMethod] = useState<'tsne' | 'pca' | 'umap'>('tsne');
   const [similarityThreshold, setSimilarityThreshold] = useState(0.38);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [autoRotate, setAutoRotate] = useState(false);
 
   const [isAddTextModalOpen, setIsAddTextModalOpen] = useState(false);
   const [isAddImageModalOpen, setIsAddImageModalOpen] = useState(false);
@@ -197,6 +198,7 @@ export const App: React.FC = () => {
               hoveredNodeId={hoveredNodeId}
               setHoveredNodeId={setHoveredNodeId}
               mode={mode}
+              autoRotate={autoRotate}
             />
 
             {/* Clean Slate Empty State */}
@@ -249,8 +251,10 @@ export const App: React.FC = () => {
           stats={graphData?.stats || null}
           reductionMethod={reductionMethod}
           similarityThreshold={similarityThreshold}
+          autoRotate={autoRotate}
           onMethodChange={handleMethodChange}
           onThresholdChange={handleThresholdChange}
+          onToggleAutoRotate={() => setAutoRotate(!autoRotate)}
           onClear={handleClearSlate}
           onLoadSample={handleLoadSample}
           onOpenArchitecture={() => setIsArchModalOpen(true)}

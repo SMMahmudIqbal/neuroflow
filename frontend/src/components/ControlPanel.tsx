@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { SlidersHorizontal, ChevronDown, ChevronUp, Compass } from 'lucide-react';
 import type { GraphStats } from '../types';
 
 interface ControlPanelProps {
   stats: GraphStats | null;
   reductionMethod: 'tsne' | 'pca' | 'umap';
   similarityThreshold: number;
+  autoRotate: boolean;
   onMethodChange: (method: 'tsne' | 'pca' | 'umap') => void;
   onThresholdChange: (threshold: number) => void;
+  onToggleAutoRotate: () => void;
   onClear: () => void;
   onLoadSample: () => void;
   onOpenArchitecture: () => void;
@@ -17,8 +19,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   stats,
   reductionMethod,
   similarityThreshold,
+  autoRotate,
   onMethodChange,
   onThresholdChange,
+  onToggleAutoRotate,
   onClear,
   onLoadSample,
   onOpenArchitecture,
@@ -85,7 +89,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               />
             </div>
 
-            {/* Telemetry Minimal Line */}
+            {/* Orbit Auto-Rotate Toggle */}
+            <div className="flex items-center justify-between text-[10px] pt-0.5">
+              <span className="text-slate-500 flex items-center gap-1">
+                <Compass className="w-3 h-3 text-slate-500" />
+                Cosmic Orbit
+              </span>
+              <button
+                onClick={onToggleAutoRotate}
+                className={`px-2 py-0.5 rounded-md text-[9px] font-mono transition-all ${
+                  autoRotate ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30' : 'text-slate-600 hover:text-slate-400'
+                }`}
+              >
+                {autoRotate ? 'ACTIVE' : 'STATIC'}
+              </button>
+            </div>
+
+            {/* Telemetry Line */}
             {stats && (
               <div className="flex justify-between text-[9px] font-mono text-slate-500 pt-1 border-t border-white/5">
                 <span>{stats.totalNodes} nodes</span>
@@ -94,7 +114,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Actions */}
             <div className="grid grid-cols-2 gap-1.5 pt-1">
               <button
                 onClick={onClear}
