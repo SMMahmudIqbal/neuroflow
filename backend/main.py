@@ -21,14 +21,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for local Vite frontend
+LOCAL_FRONTEND_ORIGINS = {"http://localhost:5173", "http://127.0.0.1:5173"}
+
+# Enable CORS only for the local Vite frontend.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=list(LOCAL_FRONTEND_ORIGINS),
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
+
+
+@app.middleware("http")
+async def enforce_local_browser_origin(request, call_next):
+    origin = request.headers.get("origin")
+    if origin is not None and origin not in LOCAL_FRONTEND_ORIGINS:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=403, content={"detail": "Browser origin not allowed."})
+    return await call_next(request)
 
 engine = LatentEngine()
 vision_engine = VisionLatentEngine()
@@ -41,6 +52,7 @@ active_images: List[ImageItem] = []
 current_mode: str = "vision"
 current_method: str = "tsne"
 current_threshold: float = 0.38
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 
 class RecalculateRequest(BaseModel):
@@ -97,7 +109,9 @@ async def upload_image(
 ):
     global active_images
     try:
-        content_bytes = await file.read()
+        content_bytes = await file.read(MAX_IMAGE_BYTES + 1)
+        if len(content_bytes) > MAX_IMAGE_BYTES:
+            raise HTTPException(status_code=413, detail="Image exceeds the 5 MiB upload limit.")
         if not content_bytes:
             raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
@@ -126,6 +140,8 @@ async def upload_image(
             similarity_threshold=current_threshold
         )
         return {"message": "Image successfully projected into 3D latent space", "graph": graph}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Image processing failed: {str(e)}")
 
@@ -217,4 +233,4 @@ def add_document(req: AddDocumentRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
