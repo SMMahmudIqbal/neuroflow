@@ -71,7 +71,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python main.py
 ```
-*The FastAPI backend will run on `http://localhost:8000` with interactive Swagger docs at `http://localhost:8000/docs`.*
+*The development API binds only to loopback (`127.0.0.1:8000`) and is intended for local use. The browser frontend is allowed from the local Vite origins. Image uploads are limited to 5 MiB. Do not expose this unauthenticated in-memory demo API to a LAN or the public internet.*
 
 ### 3. Frontend Setup
 ```bash
